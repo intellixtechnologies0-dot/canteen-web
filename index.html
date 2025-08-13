@@ -9,170 +9,52 @@
     <meta property="og:title" content="Canteen Kitchen Panel" />
     <meta property="og:description" content="Manage orders efficiently with a clean, responsive kitchen workflow." />
     <meta property="og:type" content="website" />
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/styles.css?v=2" />
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <div class="brand">
-          <div class="brand-mark" aria-hidden="true">🍽️</div>
-          <div class="brand-text">
-            <span class="brand-title">Canteen Kitchen Panel</span>
-            <span class="brand-subtitle">Fast. Focused. Reliable.</span>
-          </div>
-        </div>
-        <nav class="nav">
-          <a href="#features">Features</a>
-          <a href="#demo">Live Demo</a>
-          <a href="#how-it-works">How it works</a>
-          <button id="themeToggle" class="btn btn-ghost" aria-label="Toggle theme">🌓</button>
-        </nav>
+        <h1 class="site-title">Kitchen Orders</h1>
       </div>
     </header>
 
     <main>
-      <section class="hero">
-        <div class="container hero-inner">
-          <div class="hero-copy">
-            <h1>Kitchen Panel for Your Canteen App</h1>
-            <p>
-              A clean, responsive interface for kitchen staff to accept, track, and
-              complete orders without friction. Built for busy rush hours and small
-              screens alike.
-            </p>
-            <div class="hero-ctas">
-              <a href="#demo" class="btn btn-primary">Try the Live Demo</a>
-              <a href="#features" class="btn btn-secondary">Explore Features</a>
-            </div>
-            <ul class="hero-highlights">
-              <li>Real-time queue with SLA timers</li>
-              <li>Quick actions: Start, Delay, Mark Ready</li>
-              <li>Sound and visual alerts</li>
-              <li>Dark mode support</li>
-            </ul>
-          </div>
-          <div class="hero-art" aria-hidden="true">
-            <div class="mock-panel">
-              <div class="mock-toolbar">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="mock-title">Kitchen Panel</span>
+      <section class="section">
+        <div class="container">
+          <div class="board-grid">
+            <div class="lane">
+              <div class="lane-head">
+                <h2>Preparing</h2>
+                <span class="count" id="countPreparing">0</span>
               </div>
-              <div class="mock-body">
-                <div class="mock-order new">#1024 • 2x Veg Sandwich • NEW</div>
-                <div class="mock-order prog">#1023 • 1x Pasta • IN-PROGRESS</div>
-                <div class="mock-order ready">#1022 • 3x Tea • READY</div>
-                <div class="mock-order late">#1021 • 1x Biryani • DELAYED</div>
+              <div class="lane-body" id="lanePreparing"></div>
+            </div>
+            <div class="lane">
+              <div class="lane-head">
+                <h2>Prepared</h2>
+                <span class="count" id="countPrepared">0</span>
               </div>
+              <div class="lane-body" id="lanePrepared"></div>
+            </div>
+            <div class="lane">
+              <div class="lane-head">
+                <h2>Delivered</h2>
+                <span class="count" id="countDelivered">0</span>
+              </div>
+              <div class="lane-body" id="laneDelivered"></div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="features" class="section">
-        <div class="container">
-          <h2>Features</h2>
-          <div class="features-grid">
-            <div class="feature-card">
-              <div class="feature-icon">⏱️</div>
-              <h3>SLA Timers</h3>
-              <p>See elapsed time and ETA to proactively avoid delays.</p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">✅</div>
-              <h3>One-Tap Actions</h3>
-              <p>Start, delay, or mark orders ready with minimal taps.</p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">🔔</div>
-              <h3>Alerts</h3>
-              <p>Sound and visual cues for new and delayed orders.</p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">🌓</div>
-              <h3>Dark Mode</h3>
-              <p>Comfortable on eyes for long shifts and night mode.</p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">🔎</div>
-              <h3>Search & Filters</h3>
-              <p>Find orders by token, table, item, or status quickly.</p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">📱</div>
-              <h3>Responsive</h3>
-              <p>Optimized for tablets, kiosks, and mobile screens.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="demo" class="section demo">
-        <div class="container">
-          <div class="section-head">
-            <h2>Live Demo (Mock Data)</h2>
-            <div class="demo-controls">
-              <button id="simulateToggle" class="btn btn-primary">Start Simulation</button>
-              <button id="soundToggle" class="btn btn-secondary" aria-pressed="false">Sound: Off</button>
-              <div class="divider"></div>
-              <label class="field">
-                <span>Status</span>
-                <select id="statusFilter">
-                  <option value="ALL">All</option>
-                  <option value="NEW">New</option>
-                  <option value="IN_PROGRESS">In-Progress</option>
-                  <option value="READY">Ready</option>
-                  <option value="DELAYED">Delayed</option>
-                  <option value="CANCELLED">Cancelled</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>Search</span>
-                <input id="searchInput" type="search" placeholder="Search token, table, item..." />
-              </label>
-            </div>
-          </div>
-
-          <div class="kpis">
-            <div class="kpi"><span id="kpiTotal" class="kpi-num">0</span><span class="kpi-label">Total</span></div>
-            <div class="kpi"><span id="kpiNew" class="kpi-num">0</span><span class="kpi-label">New</span></div>
-            <div class="kpi"><span id="kpiProg" class="kpi-num">0</span><span class="kpi-label">In-Progress</span></div>
-            <div class="kpi"><span id="kpiReady" class="kpi-num">0</span><span class="kpi-label">Ready</span></div>
-            <div class="kpi"><span id="kpiLate" class="kpi-num">0</span><span class="kpi-label">Delayed</span></div>
-          </div>
-
-          <div id="orders" class="orders"></div>
-        </div>
-      </section>
-
-      <section id="how-it-works" class="section">
-        <div class="container">
-          <h2>How it works</h2>
-          <ol class="howto">
-            <li>New orders arrive in the queue with a token, table number, items, and ETA.</li>
-            <li>Tap Start to begin preparation; timer turns active.</li>
-            <li>Mark Ready when complete; counters update instantly.</li>
-            <li>Orders turn Delayed if they cross ETA; get alerted to prioritize.</li>
-          </ol>
-          <p class="note">This demo runs locally with mock data and no backend. Hook it up to your API or Firebase to go live.</p>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="container footer-inner">
-        <div class="foot-brand">🍽️ Canteen Kitchen Panel</div>
-        <div class="foot-links">
-          <a href="#features">Features</a>
-          <a href="#demo">Demo</a>
-          <a href="#how-it-works">How it works</a>
-        </div>
-        <div class="foot-copy">© <span id="year"></span> All rights reserved.</div>
+      <div class="container">
+        <div class="foot-copy">© <span id="year"></span></div>
       </div>
     </footer>
 
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js?v=2"></script>
   </body>
   </html>
 

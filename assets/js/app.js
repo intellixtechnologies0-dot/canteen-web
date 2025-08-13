@@ -1,16 +1,10 @@
 (function () {
-  const ordersContainer = document.getElementById('orders');
-  const statusFilter = document.getElementById('statusFilter');
-  const searchInput = document.getElementById('searchInput');
-  const simulateToggle = document.getElementById('simulateToggle');
-  const soundToggle = document.getElementById('soundToggle');
-  const themeToggle = document.getElementById('themeToggle');
-
-  const kpiTotal = document.getElementById('kpiTotal');
-  const kpiNew = document.getElementById('kpiNew');
-  const kpiProg = document.getElementById('kpiProg');
-  const kpiReady = document.getElementById('kpiReady');
-  const kpiLate = document.getElementById('kpiLate');
+  const lanePreparing = document.getElementById('lanePreparing');
+  const lanePrepared = document.getElementById('lanePrepared');
+  const laneDelivered = document.getElementById('laneDelivered');
+  const countPreparing = document.getElementById('countPreparing');
+  const countPrepared = document.getElementById('countPrepared');
+  const countDelivered = document.getElementById('countDelivered');
   const yearEl = document.getElementById('year');
 
   const STATUS = {
@@ -29,23 +23,15 @@
   };
 
   // Theme
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  if (savedTheme === 'light') document.documentElement.classList.add('light');
-  themeToggle?.addEventListener('click', () => {
-    document.documentElement.classList.toggle('light');
-    const mode = document.documentElement.classList.contains('light') ? 'light' : 'dark';
-    localStorage.setItem('theme', mode);
-  });
+  // Keep single white/black theme aligned with app (no toggle here)
 
   // Utilities
-  function formatItems(items) {
-    return items.map((it) => `${it.qty}x ${it.name}`).join(', ');
-  }
+  function formatItems(items) { return items.map((it) => `${it.qty}x ${it.name}`).join(', '); }
 
   function minutes(ms) { return Math.round(ms / 60000); }
 
   function computeDerivedStatus(order) {
-    if (order.status === STATUS.READY || order.status === STATUS.CANCELLED) return order.status;
+    if (order.status === STATUS.READY || order.status === STATUS.CANCELLED || order.status === 'DELIVERED') return order.status;
     const elapsed = Date.now() - order.placedAt;
     const isLate = minutes(elapsed) > order.etaMinutes;
     if (isLate && order.status !== STATUS.IN_PROGRESS) return STATUS.DELAYED;
@@ -72,7 +58,7 @@
   }
 
   // Mock data
-  const menuItems = ['Veg Sandwich', 'Pasta', 'Tea', 'Coffee', 'Biryani', 'Fried Rice', 'Burger', 'Fries', 'Paneer Roll', 'Salad'];
+  const menuItems = ['Veg Sandwich', 'Pasta', 'Tea', 'Coffee', 'Biryani', 'Fried Rice'];
   function createMockOrder() {
     const itemCount = 1 + Math.floor(Math.random() * 3);
     const items = Array.from({ length: itemCount }, () => ({
@@ -93,89 +79,65 @@
 
   // Render
   function render() {
-    // Derived statuses
     state.orders = state.orders.map((o) => ({ ...o, status: computeDerivedStatus(o) }));
 
-    const filter = statusFilter?.value || 'ALL';
-    const query = (searchInput?.value || '').trim().toLowerCase();
+    const preparing = state.orders.filter((o) => o.status === STATUS.IN_PROGRESS || o.status === STATUS.NEW);
+    const prepared = state.orders.filter((o) => o.status === STATUS.READY);
+    const delivered = state.orders.filter((o) => o.status === 'DELIVERED');
 
-    const filtered = state.orders.filter((o) => {
-      const byStatus = filter === 'ALL' ? true : o.status === filter;
-      const byQuery = !query ? true : (
-        String(o.token).includes(query) ||
-        o.table.toLowerCase().includes(query) ||
-        formatItems(o.items).toLowerCase().includes(query)
-      );
-      return byStatus && byQuery;
-    });
+    if (lanePreparing) lanePreparing.innerHTML = '';
+    if (lanePrepared) lanePrepared.innerHTML = '';
+    if (laneDelivered) laneDelivered.innerHTML = '';
 
-    // KPIs
-    const counts = {
-      total: state.orders.length,
-      NEW: state.orders.filter((o) => o.status === STATUS.NEW).length,
-      IN_PROGRESS: state.orders.filter((o) => o.status === STATUS.IN_PROGRESS).length,
-      READY: state.orders.filter((o) => o.status === STATUS.READY).length,
-      DELAYED: state.orders.filter((o) => o.status === STATUS.DELAYED).length,
+    const append = (lane, order) => {
+      const card = document.createElement('div');
+      card.className = 'order';
+      card.dataset.id = order.id;
+      card.innerHTML = `
+        <div class="order-head">
+          <div>
+            <div class="order-token">#${order.token} • ${order.table}</div>
+            <div class="order-meta">ETA ${order.etaMinutes}m • ${minutes(Date.now() - order.placedAt)}m elapsed</div>
+          </div>
+          <div class="order-status">${renderStatusBadge(order.status)}</div>
+        </div>
+        <ul class="order-items">${order.items.map((i) => `<li>${i.qty}x ${i.name}</li>`).join('')}</ul>
+        <div class="order-actions">${renderActions(order.status)}</div>
+      `;
+      lane?.appendChild(card);
     };
-    if (kpiTotal) kpiTotal.textContent = counts.total;
-    if (kpiNew) kpiNew.textContent = counts.NEW;
-    if (kpiProg) kpiProg.textContent = counts.IN_PROGRESS;
-    if (kpiReady) kpiReady.textContent = counts.READY;
-    if (kpiLate) kpiLate.textContent = counts.DELAYED;
 
-    // DOM
-    if (!ordersContainer) return;
-    ordersContainer.innerHTML = '';
-    filtered
-      .sort((a, b) => a.token - b.token)
-      .forEach((o) => {
-        const card = document.createElement('div');
-        card.className = 'order';
-        card.dataset.id = o.id;
-        card.innerHTML = `
-          <div class="order-head">
-            <div>
-              <div class="order-token">#${o.token} • ${o.table}</div>
-              <div class="order-meta">ETA ${o.etaMinutes}m • Placed ${minutes(Date.now() - o.placedAt)}m ago</div>
-            </div>
-            <div class="order-status">
-              ${renderStatusBadge(o.status)}
-            </div>
-          </div>
-          <ul class="order-items">${o.items.map((i) => `<li>${i.qty}x ${i.name}</li>`).join('')}</ul>
-          <div class="order-actions">
-            ${renderActions(o.status)}
-          </div>
-        `;
-        ordersContainer.appendChild(card);
-      });
+    preparing.sort((a, b) => a.token - b.token).forEach((o) => append(lanePreparing, o));
+    prepared.sort((a, b) => a.token - b.token).forEach((o) => append(lanePrepared, o));
+    delivered.sort((a, b) => a.token - b.token).forEach((o) => append(laneDelivered, o));
+
+    if (countPreparing) countPreparing.textContent = String(preparing.length);
+    if (countPrepared) countPrepared.textContent = String(prepared.length);
+    if (countDelivered) countDelivered.textContent = String(delivered.length);
   }
 
   function renderStatusBadge(status) {
     switch (status) {
-      case STATUS.NEW: return '<span class="badge new">NEW</span>';
-      case STATUS.IN_PROGRESS: return '<span class="badge inprog">IN-PROGRESS</span>';
-      case STATUS.READY: return '<span class="badge ready">READY</span>';
-      case STATUS.DELAYED: return '<span class="badge delayed">DELAYED</span>';
-      case STATUS.CANCELLED: return '<span class="badge cancel">CANCELLED</span>';
+      case STATUS.NEW: return '<span class="badge">NEW</span>';
+      case STATUS.IN_PROGRESS: return '<span class="badge">PREPARING</span>';
+      case STATUS.READY: return '<span class="badge">PREPARED</span>';
+      case 'DELIVERED': return '<span class="badge">DELIVERED</span>';
       default: return '';
     }
   }
 
   function renderActions(status) {
     const start = '<button class="btn btn-secondary act-start">Start</button>';
-    const delay = '<button class="btn btn-ghost act-delay">+5m</button>';
-    const ready = '<button class="btn btn-primary act-ready">Ready</button>';
-    const cancel = '<button class="btn btn-ghost act-cancel">Cancel</button>';
-    if (status === STATUS.NEW) return `${start}${delay}${cancel}`;
-    if (status === STATUS.IN_PROGRESS) return `${ready}${delay}${cancel}`;
-    if (status === STATUS.DELAYED) return `${start}${delay}${cancel}`;
-    if (status === STATUS.READY || status === STATUS.CANCELLED) return '';
+    const ready = '<button class="btn btn-primary act-ready">Prepared</button>';
+    const deliver = '<button class="btn btn-secondary act-deliver">Delivered</button>';
+    if (status === STATUS.NEW) return `${start}`;
+    if (status === STATUS.IN_PROGRESS) return `${ready}`;
+    if (status === STATUS.READY) return `${deliver}`;
     return '';
   }
 
   // Actions
-  ordersContainer?.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
     const target = e.target;
     if (!(target instanceof HTMLElement)) return;
     const card = target.closest('.order');
@@ -188,43 +150,27 @@
       order.status = STATUS.IN_PROGRESS;
       order.startedAt = Date.now();
     }
-    if (target.classList.contains('act-delay')) {
-      order.etaMinutes += 5;
-    }
     if (target.classList.contains('act-ready')) {
       order.status = STATUS.READY;
     }
-    if (target.classList.contains('act-cancel')) {
-      order.status = STATUS.CANCELLED;
+    if (target.classList.contains('act-deliver')) {
+      order.status = 'DELIVERED';
     }
     render();
   });
 
   // Controls
-  statusFilter?.addEventListener('change', render);
-  searchInput?.addEventListener('input', render);
-  soundToggle?.addEventListener('click', () => {
-    state.sound = !state.sound;
-    soundToggle.setAttribute('aria-pressed', state.sound ? 'true' : 'false');
-    soundToggle.textContent = state.sound ? 'Sound: On' : 'Sound: Off';
-  });
+  // No filter/search/sound controls in simplified layout
 
   let simTimer = null;
-  simulateToggle?.addEventListener('click', () => {
-    state.simulate = !state.simulate;
-    simulateToggle.textContent = state.simulate ? 'Stop Simulation' : 'Start Simulation';
-    if (state.simulate) {
-      simTimer = setInterval(() => {
-        const order = createMockOrder();
-        state.orders.unshift(order);
-        beep();
-        render();
-      }, 3500);
-    } else if (simTimer) {
-      clearInterval(simTimer);
-      simTimer = null;
-    }
-  });
+  // Auto simulation on load for demo
+  state.simulate = true;
+  simTimer = setInterval(() => {
+    const order = createMockOrder();
+    state.orders.unshift(order);
+    beep();
+    render();
+  }, 4000);
 
   // Live timers re-render
   setInterval(render, 5000);
