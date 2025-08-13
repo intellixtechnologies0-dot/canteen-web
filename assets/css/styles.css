@@ -36,11 +36,20 @@ a { color: var(--brand); text-decoration: none; }
 .btn-ghost { background: transparent; border: 1px solid var(--border); }
 .btn:active { transform: translateY(1px); }
 
-.board-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.lane { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+.board-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.lane { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
 .lane-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); }
 .lane-body { padding: 12px; display: grid; gap: 10px; }
 .count { background: #111111; color: #ffffff; font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+
+/* Clear status-specific backgrounds for visibility */
+.lane--preparing .lane-head { background: #fff7ed; /* light orange */ }
+.lane--prepared .lane-head { background: #ecfeff; /* light cyan */ }
+
+/* Delivered as a separate folder-style section */
+.folder { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+.folder-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); background: #f0fdf4; /* light green */ }
+.folder-body { padding: 12px; display: grid; gap: 10px; }
 
 .section { padding: 40px 0; }
 .section h2 { margin: 0 0 16px; }
