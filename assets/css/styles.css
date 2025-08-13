@@ -37,6 +37,8 @@ a { color: var(--brand); text-decoration: none; }
 .search input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; }
 .avatar { width: 28px; height: 28px; border-radius: 999px; border: 1px solid var(--border); background: #efefef; }
 .main { padding: 20px; display: grid; gap: 20px; }
+.route { display: none; }
+.route.active { display: block; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 16px; }
 .card h2 { margin: 0 0 12px; }

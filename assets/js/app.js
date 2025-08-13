@@ -1,10 +1,24 @@
 (function () {
-  const liveOrdersBody = document.getElementById('liveOrdersBody');
-  const mealQueue = document.getElementById('mealQueue');
+  // Dashboard widgets
+  const liveOrdersBody = document.getElementById('liveOrdersFullBody');
+  const mealQueue = document.getElementById('mealQueueFull');
   const kpiTotal = document.getElementById('kpiTotal');
   const kpiPending = document.getElementById('kpiPending');
   const kpiCompleted = document.getElementById('kpiCompleted');
   const yearEl = document.getElementById('year');
+
+  // Router elements
+  const sideNav = document.getElementById('sideNav');
+  const routes = {
+    'dashboard': document.getElementById('route-dashboard'),
+    'live-orders': document.getElementById('route-live-orders'),
+    'inventory-management': document.getElementById('route-inventory-management'),
+    'inventory': document.getElementById('route-inventory'),
+    'meal-prep': document.getElementById('route-meal-prep'),
+    'reports': document.getElementById('route-reports'),
+    'settings': document.getElementById('route-settings'),
+    'logs': document.getElementById('route-logs'),
+  };
 
   const STATUS = {
     NEW: 'NEW',
@@ -19,6 +33,12 @@
     nextToken: 1000,
     simulate: false,
     sound: false,
+    inventory: [
+      { id: 'i1', name: 'Tomatoes', stock: 12 },
+      { id: 'i2', name: 'Cheese', stock: 4 },
+      { id: 'i3', name: 'Tea Powder', stock: 1 },
+    ],
+    logs: [],
   };
 
   // Theme
@@ -114,6 +134,48 @@
         mealQueue.appendChild(div);
       });
     }
+
+    // Inventory Alerts (dashboard + inventory mgmt)
+    const lowItems = state.inventory.filter((i) => i.stock <= 2);
+    const invAlerts = document.getElementById('invAlerts');
+    if (invAlerts) {
+      invAlerts.innerHTML = lowItems.length ? lowItems.map((i) => `<li>${i.name} low (${i.stock})</li>`).join('') : '<li>All good</li>';
+    }
+    const invMgmtAlerts = document.getElementById('invMgmtAlerts');
+    if (invMgmtAlerts) {
+      invMgmtAlerts.innerHTML = invAlerts?.innerHTML || '';
+    }
+
+    // Inventory table
+    const inventoryBody = document.getElementById('inventoryBody');
+    if (inventoryBody) {
+      inventoryBody.innerHTML = '';
+      state.inventory.forEach((it) => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = it.id;
+        tr.innerHTML = `
+          <td>${it.name}</td>
+          <td>${it.stock}</td>
+          <td>
+            <button class="btn btn-secondary inv-inc">+1</button>
+            <button class="btn btn-ghost inv-dec">-1</button>
+          </td>
+        `;
+        inventoryBody.appendChild(tr);
+      });
+    }
+
+    // Reports KPIs
+    const repTotal = document.getElementById('repTotal');
+    const repPrep = document.getElementById('repPrep');
+    const repDone = document.getElementById('repDone');
+    if (repTotal) repTotal.textContent = String(state.orders.length);
+    if (repPrep) repPrep.textContent = String(pending.length);
+    if (repDone) repDone.textContent = String(completed.length);
+
+    // Logs
+    const logsList = document.getElementById('logsList');
+    if (logsList) logsList.innerHTML = state.logs.map((l) => `<li>${l}</li>`).join('');
   }
 
   function statusLabel(status) {
@@ -139,23 +201,50 @@
     const target = e.target;
     if (!(target instanceof HTMLElement)) return;
     const row = target.closest('[data-id]');
-    if (!row) return;
-    const id = row.dataset.id;
-    const order = state.orders.find((o) => o.id === id);
-    if (!order) return;
+    const id = row?.dataset.id;
 
-    if (target.classList.contains('act-start')) {
-      order.status = STATUS.IN_PROGRESS;
-      order.startedAt = Date.now();
+    if (id) {
+      const order = state.orders.find((o) => o.id === id);
+      if (order) {
+        if (target.classList.contains('act-start')) { order.status = STATUS.IN_PROGRESS; order.startedAt = Date.now(); state.logs.unshift(`#${order.token} started`); }
+        if (target.classList.contains('act-ready')) { order.status = STATUS.READY; state.logs.unshift(`#${order.token} marked ready`); }
+        if (target.classList.contains('act-deliver')) { order.status = 'DELIVERED'; state.logs.unshift(`#${order.token} delivered`); }
+      }
     }
-    if (target.classList.contains('act-ready')) {
-      order.status = STATUS.READY;
-    }
-    if (target.classList.contains('act-deliver')) {
-      order.status = 'DELIVERED';
+
+    // Inventory adjust
+    if (target.classList.contains('inv-inc') || target.classList.contains('inv-dec')) {
+      const it = state.inventory.find((i) => i.id === id);
+      if (it) {
+        it.stock += target.classList.contains('inv-inc') ? 1 : -1;
+        if (it.stock < 0) it.stock = 0;
+        state.logs.unshift(`${it.name} stock ${target.classList.contains('inv-inc') ? '+1' : '-1'}`);
+      }
     }
     render();
   });
+
+  // Settings
+  const settingSound = document.getElementById('settingSound');
+  settingSound?.addEventListener('change', () => {
+    state.sound = !!settingSound.checked;
+    state.logs.unshift(`Sound ${state.sound ? 'enabled' : 'disabled'}`);
+  });
+
+  // Simple hash router
+  function setRoute(route) {
+    Object.values(routes).forEach((el) => el?.classList.remove('active'));
+    routes[route]?.classList.add('active');
+    document.querySelectorAll('.side-item').forEach((a) => a.classList.remove('active'));
+    document.querySelector(`.side-item[data-route="${route}"]`)?.classList.add('active');
+  }
+  function parseRoute() {
+    const hash = window.location.hash || '#/dashboard';
+    const route = hash.replace('#/', '');
+    if (routes[route]) setRoute(route); else setRoute('dashboard');
+  }
+  window.addEventListener('hashchange', parseRoute);
+  parseRoute();
 
   // Controls
   // No filter/search/sound controls in simplified layout

@@ -14,15 +14,15 @@
   <body>
     <div class="app">
       <aside class="sidebar">
-        <nav class="side-nav">
-          <a class="side-item active">Home</a>
-          <a class="side-item">Live Orders</a>
-          <a class="side-item">Inventory Management</a>
-          <a class="side-item">Inventory</a>
-          <a class="side-item">Meal Prep</a>
-          <a class="side-item">Reports</a>
-          <a class="side-item">Settings</a>
-          <a class="side-item">Logs</a>
+        <nav class="side-nav" id="sideNav">
+          <a class="side-item active" href="#/dashboard" data-route="dashboard">Home</a>
+          <a class="side-item" href="#/live-orders" data-route="live-orders">Live Orders</a>
+          <a class="side-item" href="#/inventory-management" data-route="inventory-management">Inventory Management</a>
+          <a class="side-item" href="#/inventory" data-route="inventory">Inventory</a>
+          <a class="side-item" href="#/meal-prep" data-route="meal-prep">Meal Prep</a>
+          <a class="side-item" href="#/reports" data-route="reports">Reports</a>
+          <a class="side-item" href="#/settings" data-route="settings">Settings</a>
+          <a class="side-item" href="#/logs" data-route="logs">Logs</a>
         </nav>
       </aside>
 
@@ -38,7 +38,7 @@
         </header>
 
         <main class="main">
-          <section class="grid-2">
+          <section id="route-dashboard" class="route active grid-2">
             <div class="card">
               <h2>Orders Today</h2>
               <div class="kpi-row">
@@ -49,10 +49,7 @@
             </div>
             <div class="card">
               <h2>Inventory Alerts</h2>
-              <ul class="list" id="invAlerts">
-                <li>Low: 2 items</li>
-                <li>Out of stock: 1 item</li>
-              </ul>
+              <ul class="list" id="invAlerts"></ul>
               <div class="row gap">
                 <button class="btn btn-secondary">Add Dish</button>
                 <button class="btn btn-secondary">Update Stock</button>
@@ -60,7 +57,7 @@
             </div>
           </section>
 
-          <section class="grid-2">
+          <section id="route-live-orders" class="route">
             <div class="card">
               <div class="card-head"><h2>Live Orders</h2></div>
               <div class="table-wrap">
@@ -68,13 +65,67 @@
                   <thead>
                     <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
                   </thead>
-                  <tbody id="liveOrdersBody"></tbody>
+                  <tbody id="liveOrdersFullBody"></tbody>
                 </table>
               </div>
             </div>
+          </section>
+
+          <section id="route-inventory-management" class="route">
+            <div class="card">
+              <h2>Inventory Management</h2>
+              <ul class="list" id="invMgmtAlerts"></ul>
+              <div class="row gap">
+                <button class="btn btn-secondary" id="btnAddDish">Add Dish</button>
+                <button class="btn btn-secondary" id="btnUpdateStock">Update Stock</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="route-inventory" class="route">
+            <div class="card">
+              <h2>Inventory</h2>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead><tr><th>Item</th><th>Stock</th><th>Actions</th></tr></thead>
+                  <tbody id="inventoryBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section id="route-meal-prep" class="route">
             <div class="card">
               <h2>Meal Prep Queues</h2>
-              <div id="mealQueue" class="queue"></div>
+              <div id="mealQueueFull" class="queue"></div>
+            </div>
+          </section>
+
+          <section id="route-reports" class="route">
+            <div class="card">
+              <h2>Reports</h2>
+              <div class="kpi-row">
+                <div class="kpi"><div id="repTotal" class="num">0</div><div class="lbl">Total Orders</div></div>
+                <div class="kpi"><div id="repPrep" class="num">0</div><div class="lbl">In Prep</div></div>
+                <div class="kpi"><div id="repDone" class="num">0</div><div class="lbl">Completed</div></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="route-settings" class="route">
+            <div class="card">
+              <h2>Settings</h2>
+              <label style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="settingSound" />
+                <span>Enable sound alerts</span>
+              </label>
+            </div>
+          </section>
+
+          <section id="route-logs" class="route">
+            <div class="card">
+              <h2>Logs</h2>
+              <ul class="list" id="logsList"></ul>
             </div>
           </section>
         </main>
@@ -85,7 +136,7 @@
       </div>
     </div>
 
-    <script src="assets/js/app.js?v=3"></script>
+    <script src="assets/js/app.js?v=4"></script>
   </body>
   </html>
 
