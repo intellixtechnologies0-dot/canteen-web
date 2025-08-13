@@ -57,6 +57,37 @@
             </div>
           </section>
 
+          <section class="route active grid-2" data-dash-previews>
+            <div class="card">
+              <div class="card-head"><h2>Orders (Preview)</h2></div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th></tr>
+                  </thead>
+                  <tbody id="dashOrdersBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <h2>Meal Prep Queue (Preview)</h2>
+              <div id="dashMealQueue" class="queue"></div>
+            </div>
+            <div class="card">
+              <h2>Inventory (Preview)</h2>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead><tr><th>Item</th><th>Stock</th></tr></thead>
+                  <tbody id="dashInventoryBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <h2>Recent Activity</h2>
+              <ul class="list" id="dashLogsList"></ul>
+            </div>
+          </section>
+
           <section id="route-live-orders" class="route">
             <div class="card">
               <div class="card-head"><h2>Orders</h2></div>
@@ -136,7 +167,7 @@
       </div>
     </div>
 
-    <script src="assets/js/app.js?v=5"></script>
+    <script src="assets/js/app.js?v=6"></script>
   </body>
   </html>
 

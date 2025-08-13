@@ -135,6 +135,45 @@
       });
     }
 
+    // Dashboard previews
+    const dashOrdersBody = document.getElementById('dashOrdersBody');
+    if (dashOrdersBody) {
+      dashOrdersBody.innerHTML = '';
+      state.orders.slice(0, 3).forEach((o) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>#${o.token}</td>
+          <td>${o.items[0]?.name || ''}</td>
+          <td>${o.items[0]?.qty || 1}</td>
+          <td>${statusLabel(o.status)}</td>
+        `;
+        dashOrdersBody.appendChild(tr);
+      });
+    }
+    const dashMealQueue = document.getElementById('dashMealQueue');
+    if (dashMealQueue) {
+      dashMealQueue.innerHTML = '';
+      pending.slice(0, 3).forEach((o) => {
+        const div = document.createElement('div');
+        div.className = 'queue-item';
+        div.innerHTML = `<div>${o.items[0]?.name || ''}</div><div class="status">${statusLabel(o.status)}</div>`;
+        dashMealQueue.appendChild(div);
+      });
+    }
+    const dashInventoryBody = document.getElementById('dashInventoryBody');
+    if (dashInventoryBody) {
+      dashInventoryBody.innerHTML = '';
+      state.inventory.slice(0, 5).forEach((it) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${it.name}</td><td>${it.stock}</td>`;
+        dashInventoryBody.appendChild(tr);
+      });
+    }
+    const dashLogsList = document.getElementById('dashLogsList');
+    if (dashLogsList) {
+      dashLogsList.innerHTML = state.logs.slice(0, 6).map((l) => `<li>${l}</li>`).join('');
+    }
+
     // Inventory Alerts (dashboard + inventory mgmt)
     const lowItems = state.inventory.filter((i) => i.stock <= 2);
     const invAlerts = document.getElementById('invAlerts');
