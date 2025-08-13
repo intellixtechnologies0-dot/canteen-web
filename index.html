@@ -12,54 +12,80 @@
     <link rel="stylesheet" href="assets/css/styles.css?v=2" />
   </head>
   <body>
-    <header class="site-header">
-      <div class="container header-inner">
-        <h1 class="site-title">Kitchen Orders</h1>
-      </div>
-    </header>
+    <div class="app">
+      <aside class="sidebar">
+        <nav class="side-nav">
+          <a class="side-item active">Home</a>
+          <a class="side-item">Live Orders</a>
+          <a class="side-item">Inventory Management</a>
+          <a class="side-item">Inventory</a>
+          <a class="side-item">Meal Prep</a>
+          <a class="side-item">Reports</a>
+          <a class="side-item">Settings</a>
+          <a class="side-item">Logs</a>
+        </nav>
+      </aside>
 
-    <main>
-      <section class="section">
-        <div class="container">
-          <div class="board-grid">
-            <div class="lane lane--preparing">
-              <div class="lane-head">
-                <h2>Preparing</h2>
-                <span class="count" id="countPreparing">0</span>
-              </div>
-              <div class="lane-body" id="lanePreparing"></div>
-            </div>
-            <div class="lane lane--prepared">
-              <div class="lane-head">
-                <h2>Prepared</h2>
-                <span class="count" id="countPrepared">0</span>
-              </div>
-              <div class="lane-body" id="lanePrepared"></div>
-            </div>
+      <div class="content">
+        <header class="topbar">
+          <h1>Dashboard</h1>
+          <div class="top-actions">
+            <label class="search">
+              <input type="search" placeholder="Search" />
+            </label>
+            <button class="avatar" aria-label="Profile">●</button>
           </div>
-        </div>
-      </section>
+        </header>
 
-      <section class="section">
-        <div class="container">
-          <div class="folder">
-            <div class="folder-head">
-              <h2>Delivered</h2>
-              <span class="count" id="countDelivered">0</span>
+        <main class="main">
+          <section class="grid-2">
+            <div class="card">
+              <h2>Orders Today</h2>
+              <div class="kpi-row">
+                <div class="kpi"><div id="kpiTotal" class="num">0</div><div class="lbl">Total</div></div>
+                <div class="kpi"><div id="kpiPending" class="num">0</div><div class="lbl">Pending</div></div>
+                <div class="kpi"><div id="kpiCompleted" class="num">0</div><div class="lbl">Completed</div></div>
+              </div>
             </div>
-            <div class="folder-body" id="laneDelivered"></div>
-          </div>
-        </div>
-      </section>
-    </main>
+            <div class="card">
+              <h2>Inventory Alerts</h2>
+              <ul class="list" id="invAlerts">
+                <li>Low: 2 items</li>
+                <li>Out of stock: 1 item</li>
+              </ul>
+              <div class="row gap">
+                <button class="btn btn-secondary">Add Dish</button>
+                <button class="btn btn-secondary">Update Stock</button>
+              </div>
+            </div>
+          </section>
 
-    <footer class="site-footer">
-      <div class="container">
-        <div class="foot-copy">© <span id="year"></span></div>
+          <section class="grid-2">
+            <div class="card">
+              <div class="card-head"><h2>Live Orders</h2></div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
+                  </thead>
+                  <tbody id="liveOrdersBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <h2>Meal Prep Queues</h2>
+              <div id="mealQueue" class="queue"></div>
+            </div>
+          </section>
+        </main>
+
+        <footer class="site-footer">
+          <div class="foot-copy">© <span id="year"></span></div>
+        </footer>
       </div>
-    </footer>
+    </div>
 
-    <script src="assets/js/app.js?v=2"></script>
+    <script src="assets/js/app.js?v=3"></script>
   </body>
   </html>
 

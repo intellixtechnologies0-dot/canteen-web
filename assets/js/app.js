@@ -1,10 +1,9 @@
 (function () {
-  const lanePreparing = document.getElementById('lanePreparing');
-  const lanePrepared = document.getElementById('lanePrepared');
-  const laneDelivered = document.getElementById('laneDelivered');
-  const countPreparing = document.getElementById('countPreparing');
-  const countPrepared = document.getElementById('countPrepared');
-  const countDelivered = document.getElementById('countDelivered');
+  const liveOrdersBody = document.getElementById('liveOrdersBody');
+  const mealQueue = document.getElementById('mealQueue');
+  const kpiTotal = document.getElementById('kpiTotal');
+  const kpiPending = document.getElementById('kpiPending');
+  const kpiCompleted = document.getElementById('kpiCompleted');
   const yearEl = document.getElementById('year');
 
   const STATUS = {
@@ -79,53 +78,55 @@
   function render() {
     state.orders = state.orders.map((o) => ({ ...o, status: computeDerivedStatus(o) }));
 
-    const preparing = state.orders.filter((o) => o.status === STATUS.IN_PROGRESS || o.status === STATUS.NEW);
-    const prepared = state.orders.filter((o) => o.status === STATUS.READY);
-    const delivered = state.orders.filter((o) => o.status === 'DELIVERED');
+    const pending = state.orders.filter((o) => o.status === STATUS.NEW || o.status === STATUS.IN_PROGRESS);
+    const completed = state.orders.filter((o) => o.status === STATUS.READY || o.status === 'DELIVERED');
 
-    if (lanePreparing) lanePreparing.innerHTML = '';
-    if (lanePrepared) lanePrepared.innerHTML = '';
-    if (laneDelivered) laneDelivered.innerHTML = '';
+    if (kpiTotal) kpiTotal.textContent = String(state.orders.length);
+    if (kpiPending) kpiPending.textContent = String(pending.length);
+    if (kpiCompleted) kpiCompleted.textContent = String(completed.length);
 
-    const append = (lane, order) => {
-      const card = document.createElement('div');
-      card.className = 'order';
-      card.dataset.id = order.id;
-      card.innerHTML = `
-        <div class="order-head">
-          <div>
-            <div class="order-token">#${order.token} • ${order.table}</div>
-          </div>
-          <div class="order-status">${renderStatusBadge(order.status)}</div>
-        </div>
-        <ul class="order-items">${order.items.map((i) => `<li>${i.qty}x ${i.name}</li>`).join('')}</ul>
-        <div class="order-actions">${renderActions(order.status)}</div>
-      `;
-      lane?.appendChild(card);
-    };
+    if (liveOrdersBody) {
+      liveOrdersBody.innerHTML = '';
+      state.orders.slice(0, 6).forEach((o) => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = o.id;
+        tr.innerHTML = `
+          <td>#${o.token}</td>
+          <td>${o.items[0]?.name || ''}</td>
+          <td>${o.items[0]?.qty || 1}</td>
+          <td>${statusLabel(o.status)}</td>
+          <td>${renderRowAction(o.status)}</td>
+        `;
+        liveOrdersBody.appendChild(tr);
+      });
+    }
 
-    preparing.sort((a, b) => a.token - b.token).forEach((o) => append(lanePreparing, o));
-    prepared.sort((a, b) => a.token - b.token).forEach((o) => append(lanePrepared, o));
-    delivered.sort((a, b) => a.token - b.token).forEach((o) => append(laneDelivered, o));
-
-    if (countPreparing) countPreparing.textContent = String(preparing.length);
-    if (countPrepared) countPrepared.textContent = String(prepared.length);
-    if (countDelivered) countDelivered.textContent = String(delivered.length);
-  }
-
-  function renderStatusBadge(status) {
-    switch (status) {
-      case STATUS.NEW: return '<span class="badge">NEW</span>';
-      case STATUS.IN_PROGRESS: return '<span class="badge">PREPARING</span>';
-      case STATUS.READY: return '<span class="badge">PREPARED</span>';
-      case 'DELIVERED': return '<span class="badge">DELIVERED</span>';
-      default: return '';
+    if (mealQueue) {
+      mealQueue.innerHTML = '';
+      pending.slice(0, 3).forEach((o) => {
+        const div = document.createElement('div');
+        div.className = 'queue-item';
+        div.dataset.id = o.id;
+        div.innerHTML = `
+          <div>${o.items[0]?.name || ''}</div>
+          <div class="status">${statusLabel(o.status)}</div>
+        `;
+        mealQueue.appendChild(div);
+      });
     }
   }
 
-  function renderActions(status) {
+  function statusLabel(status) {
+    if (status === STATUS.NEW) return 'Pending';
+    if (status === STATUS.IN_PROGRESS) return 'In Progress';
+    if (status === STATUS.READY) return 'Ready';
+    if (status === 'DELIVERED') return 'Delivered';
+    return '';
+  }
+
+  function renderRowAction(status) {
     const start = '<button class="btn btn-secondary act-start">Start</button>';
-    const ready = '<button class="btn btn-primary act-ready">Prepared</button>';
+    const ready = '<button class="btn btn-primary act-ready">Mark Ready</button>';
     const deliver = '<button class="btn btn-secondary act-deliver">Delivered</button>';
     if (status === STATUS.NEW) return `${start}`;
     if (status === STATUS.IN_PROGRESS) return `${ready}`;
@@ -137,9 +138,9 @@
   document.addEventListener('click', (e) => {
     const target = e.target;
     if (!(target instanceof HTMLElement)) return;
-    const card = target.closest('.order');
-    if (!card) return;
-    const id = card.dataset.id;
+    const row = target.closest('[data-id]');
+    if (!row) return;
+    const id = row.dataset.id;
     const order = state.orders.find((o) => o.id === id);
     if (!order) return;
 
