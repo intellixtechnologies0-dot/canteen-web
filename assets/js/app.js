@@ -31,10 +31,8 @@
   function minutes(ms) { return Math.round(ms / 60000); }
 
   function computeDerivedStatus(order) {
+    // Keep only three visible states per requirements
     if (order.status === STATUS.READY || order.status === STATUS.CANCELLED || order.status === 'DELIVERED') return order.status;
-    const elapsed = Date.now() - order.placedAt;
-    const isLate = minutes(elapsed) > order.etaMinutes;
-    if (isLate && order.status !== STATUS.IN_PROGRESS) return STATUS.DELAYED;
     return order.status;
   }
 
@@ -97,7 +95,6 @@
         <div class="order-head">
           <div>
             <div class="order-token">#${order.token} • ${order.table}</div>
-            <div class="order-meta">ETA ${order.etaMinutes}m • ${minutes(Date.now() - order.placedAt)}m elapsed</div>
           </div>
           <div class="order-status">${renderStatusBadge(order.status)}</div>
         </div>

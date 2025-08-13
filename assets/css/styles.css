@@ -36,6 +36,10 @@ a { color: var(--brand); text-decoration: none; }
 .btn-ghost { background: transparent; border: 1px solid var(--border); }
 .btn:active { transform: translateY(1px); }
 
+/* Start action button - grey for visibility */
+.act-start { background: #f3f4f6 !important; color: #111111 !important; border-color: #e5e7eb !important; }
+.act-start:hover { background: #e5e7eb !important; }
+
 .board-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .lane { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
 .lane-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); }
