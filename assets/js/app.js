@@ -252,14 +252,8 @@
   // No filter/search/sound controls in simplified layout
 
   let simTimer = null;
-  // Auto simulation on load for demo
-  state.simulate = true;
-  simTimer = setInterval(() => {
-    const order = createMockOrder();
-    state.orders.unshift(order);
-    beep();
-    render();
-  }, 4000);
+  // Simulation disabled per request. Orders will not auto-generate.
+  state.simulate = false;
 
   // Live timers re-render
   setInterval(render, 5000);
