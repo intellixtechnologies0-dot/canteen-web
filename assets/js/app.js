@@ -237,6 +237,8 @@
     routes[route]?.classList.add('active');
     document.querySelectorAll('.side-item').forEach((a) => a.classList.remove('active'));
     document.querySelector(`.side-item[data-route="${route}"]`)?.classList.add('active');
+    // Re-render immediately on route change so route-specific widgets update
+    render();
   }
   function parseRoute() {
     const hash = window.location.hash || '#/dashboard';
