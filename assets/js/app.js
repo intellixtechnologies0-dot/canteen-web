@@ -276,6 +276,9 @@
     routes[route]?.classList.add('active');
     document.querySelectorAll('.side-item').forEach((a) => a.classList.remove('active'));
     document.querySelector(`.side-item[data-route="${route}"]`)?.classList.add('active');
+    // Show dashboard preview section only on home
+    const dashPreviews = document.querySelector('[data-dash-previews]');
+    if (dashPreviews) dashPreviews.classList.toggle('active', route === 'dashboard');
     // Re-render immediately on route change so route-specific widgets update
     render();
   }
