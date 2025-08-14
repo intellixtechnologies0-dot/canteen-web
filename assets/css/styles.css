@@ -28,10 +28,7 @@ a { color: var(--brand); text-decoration: none; }
 
 .app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
 .sidebar { background: #f7f7f7; border-right: 1px solid var(--border); padding: 16px 8px; }
-.side-nav { position: sticky; top: 0; display: grid; gap: 8px; align-content: start; max-height: 100vh; }
-.side-fixed { position: sticky; top: 0; display: grid; gap: 4px; background: #f7f7f7; padding-bottom: 8px; }
-.side-divider { height: 1px; background: var(--border); }
-.side-rest { display: grid; gap: 4px; padding-top: 4px; }
+.side-nav { position: sticky; top: 0; display: grid; gap: 4px; align-content: start; max-height: 100vh; }
 .side-item { padding: 10px 12px; border-radius: 8px; color: var(--text); }
 .side-item.active, .side-item:hover { background: #efefef; }
 .content { display: grid; grid-template-rows: auto 1fr auto; }
