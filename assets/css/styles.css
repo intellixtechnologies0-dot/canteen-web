@@ -110,6 +110,8 @@ a { color: var(--brand); text-decoration: none; }
   color: var(--muted); 
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
+  font-size: 16px;
+  font-weight: 500;
 }
 .tab-btn:hover { color: var(--text); }
 .tab-btn.active { 
