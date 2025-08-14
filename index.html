@@ -18,7 +18,6 @@
           <a class="side-item active" href="#/dashboard" data-route="dashboard">Home</a>
           <a class="side-item" href="#/live-orders" data-route="live-orders">Orders</a>
           <a class="side-item" href="#/inventory-management" data-route="inventory-management">Inventory Management</a>
-          <a class="side-item" href="#/inventory" data-route="inventory">Inventory</a>
           <a class="side-item" href="#/meal-prep" data-route="meal-prep">Meal Prep</a>
           <a class="side-item" href="#/reports" data-route="reports">Reports</a>
           <a class="side-item" href="#/settings" data-route="settings">Settings</a>
@@ -85,6 +84,17 @@
             <div class="card">
               <h2>Recent Activity</h2>
               <ul class="list" id="dashLogsList"></ul>
+            </div>
+            <div class="card" style="grid-column: 1 / -1;">
+              <h2>Orders</h2>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
+                  </thead>
+                  <tbody id="dashOrdersFullBody"></tbody>
+                </table>
+              </div>
             </div>
           </section>
 
@@ -167,7 +177,7 @@
       </div>
     </div>
 
-    <script src="assets/js/app.js?v=6"></script>
+    <script src="assets/js/app.js?v=8"></script>
   </body>
   </html>
 

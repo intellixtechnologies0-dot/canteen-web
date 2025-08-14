@@ -174,6 +174,24 @@
       dashLogsList.innerHTML = state.logs.slice(0, 6).map((l) => `<li>${l}</li>`).join('');
     }
 
+    // Full orders table inside dashboard card
+    const dashOrdersFullBody = document.getElementById('dashOrdersFullBody');
+    if (dashOrdersFullBody) {
+      dashOrdersFullBody.innerHTML = '';
+      state.orders.slice(0, 10).forEach((o) => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = o.id;
+        tr.innerHTML = `
+          <td>#${o.token}</td>
+          <td>${o.items[0]?.name || ''}</td>
+          <td>${o.items[0]?.qty || 1}</td>
+          <td>${statusLabel(o.status)}</td>
+          <td>${renderRowAction(o.status)}</td>
+        `;
+        dashOrdersFullBody.appendChild(tr);
+      });
+    }
+
     // Inventory Alerts (dashboard + inventory mgmt)
     const lowItems = state.inventory.filter((i) => i.stock <= 2);
     const invAlerts = document.getElementById('invAlerts');
