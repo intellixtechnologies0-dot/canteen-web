@@ -11,10 +11,10 @@
   const sideNav = document.getElementById('sideNav');
   const routes = {
     'dashboard': document.getElementById('route-dashboard'),
-    'live-orders': document.getElementById('route-live-orders'),
+    'ongoing-orders': document.getElementById('route-ongoing-orders'),
+    'past-orders': document.getElementById('route-past-orders'),
     'inventory-management': document.getElementById('route-inventory-management'),
     'inventory': document.getElementById('route-inventory'),
-    'meal-prep': document.getElementById('route-meal-prep'),
     'reports': document.getElementById('route-reports'),
     'settings': document.getElementById('route-settings'),
     'logs': document.getElementById('route-logs'),
@@ -105,9 +105,11 @@
     if (kpiPending) kpiPending.textContent = String(pending.length);
     if (kpiCompleted) kpiCompleted.textContent = String(completed.length);
 
-    if (liveOrdersBody) {
-      liveOrdersBody.innerHTML = '';
-      state.orders.slice(0, 6).forEach((o) => {
+    // Ongoing Orders (NEW and IN_PROGRESS)
+    const ongoingOrdersBody = document.getElementById('ongoingOrdersBody');
+    if (ongoingOrdersBody) {
+      ongoingOrdersBody.innerHTML = '';
+      pending.forEach((o) => {
         const tr = document.createElement('tr');
         tr.dataset.id = o.id;
         tr.innerHTML = `
@@ -117,21 +119,28 @@
           <td>${statusLabel(o.status)}</td>
           <td>${renderRowAction(o.status)}</td>
         `;
-        liveOrdersBody.appendChild(tr);
+        ongoingOrdersBody.appendChild(tr);
       });
     }
 
-    if (mealQueue) {
-      mealQueue.innerHTML = '';
-      pending.slice(0, 3).forEach((o) => {
-        const div = document.createElement('div');
-        div.className = 'queue-item';
-        div.dataset.id = o.id;
-        div.innerHTML = `
-          <div>${o.items[0]?.name || ''}</div>
-          <div class="status">${statusLabel(o.status)}</div>
+    // Past Orders (READY and DELIVERED)
+    const pastOrdersBody = document.getElementById('pastOrdersBody');
+    if (pastOrdersBody) {
+      pastOrdersBody.innerHTML = '';
+      completed.forEach((o) => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = o.id;
+        const completedTime = o.status === 'DELIVERED' ? 
+          new Date(o.deliveredAt || o.placedAt).toLocaleTimeString() : 
+          new Date(o.placedAt).toLocaleTimeString();
+        tr.innerHTML = `
+          <td>#${o.token}</td>
+          <td>${o.items[0]?.name || ''}</td>
+          <td>${o.items[0]?.qty || 1}</td>
+          <td>${statusLabel(o.status)}</td>
+          <td>${completedTime}</td>
         `;
-        mealQueue.appendChild(div);
+        pastOrdersBody.appendChild(tr);
       });
     }
 
@@ -265,7 +274,7 @@
       if (order) {
         if (target.classList.contains('act-start')) { order.status = STATUS.IN_PROGRESS; order.startedAt = Date.now(); state.logs.unshift(`#${order.token} started`); }
         if (target.classList.contains('act-ready')) { order.status = STATUS.READY; state.logs.unshift(`#${order.token} marked ready`); }
-        if (target.classList.contains('act-deliver')) { order.status = 'DELIVERED'; state.logs.unshift(`#${order.token} delivered`); }
+        if (target.classList.contains('act-deliver')) { order.status = 'DELIVERED'; order.deliveredAt = Date.now(); state.logs.unshift(`#${order.token} delivered`); }
       }
     }
 
@@ -300,10 +309,10 @@
     if (pageTitle) {
       const titles = {
         'dashboard': 'Dashboard',
-        'live-orders': 'Orders',
+        'ongoing-orders': 'Ongoing Orders',
+        'past-orders': 'Past Orders',
         'inventory-management': 'Inventory Management',
         'inventory': 'Inventory',
-        'meal-prep': 'Meal Prep',
         'reports': 'Reports',
         'settings': 'Settings',
         'logs': 'Logs'

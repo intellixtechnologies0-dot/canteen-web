@@ -9,20 +9,20 @@
     <meta property="og:title" content="Canteen Kitchen Panel" />
     <meta property="og:description" content="Manage orders efficiently with a clean, responsive kitchen workflow." />
     <meta property="og:type" content="website" />
-    <link rel="stylesheet" href="assets/css/styles.css?v=12" />
+    <link rel="stylesheet" href="assets/css/styles.css?v=13" />
   </head>
   <body>
     <div class="app">
       <aside class="sidebar">
-        <nav class="side-nav" id="sideNav">
-          <a class="side-item active" href="#/dashboard" data-route="dashboard">Home</a>
-          <a class="side-item" href="#/live-orders" data-route="live-orders">Orders</a>
-          <a class="side-item" href="#/inventory-management" data-route="inventory-management">Inventory Management</a>
-          <a class="side-item" href="#/meal-prep" data-route="meal-prep">Meal Prep</a>
-          <a class="side-item" href="#/reports" data-route="reports">Reports</a>
-          <a class="side-item" href="#/settings" data-route="settings">Settings</a>
-          <a class="side-item" href="#/logs" data-route="logs">Logs</a>
-        </nav>
+                 <nav class="side-nav" id="sideNav">
+           <a class="side-item active" href="#/dashboard" data-route="dashboard">Home</a>
+           <a class="side-item" href="#/ongoing-orders" data-route="ongoing-orders">Ongoing Orders</a>
+           <a class="side-item" href="#/past-orders" data-route="past-orders">Past Orders</a>
+           <a class="side-item" href="#/inventory-management" data-route="inventory-management">Inventory Management</a>
+           <a class="side-item" href="#/reports" data-route="reports">Reports</a>
+           <a class="side-item" href="#/settings" data-route="settings">Settings</a>
+           <a class="side-item" href="#/logs" data-route="logs">Logs</a>
+         </nav>
       </aside>
 
       <div class="content">
@@ -103,7 +103,7 @@
             </div>
           </section>
 
-                     <section id="route-live-orders" class="route">
+                     <section id="route-ongoing-orders" class="route">
              <div class="card">
                <div class="card-head"></div>
               <div class="table-wrap">
@@ -111,7 +111,21 @@
                   <thead>
                     <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
                   </thead>
-                  <tbody id="liveOrdersFullBody"></tbody>
+                  <tbody id="ongoingOrdersBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+                     <section id="route-past-orders" class="route">
+             <div class="card">
+               <div class="card-head"></div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th>Completed At</th></tr>
+                  </thead>
+                  <tbody id="pastOrdersBody"></tbody>
                 </table>
               </div>
             </div>
@@ -138,11 +152,7 @@
             </div>
           </section>
 
-                     <section id="route-meal-prep" class="route">
-             <div class="card">
-              <div id="mealQueueFull" class="queue"></div>
-            </div>
-          </section>
+
 
                      <section id="route-reports" class="route">
              <div class="card">
@@ -176,7 +186,7 @@
       </div>
     </div>
 
-    <script src="assets/js/app.js?v=14"></script>
+    <script src="assets/js/app.js?v=15"></script>
   </body>
 </html>
 
