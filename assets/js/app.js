@@ -294,6 +294,23 @@
     routes[route]?.classList.add('active');
     document.querySelectorAll('.side-item').forEach((a) => a.classList.remove('active'));
     document.querySelector(`.side-item[data-route="${route}"]`)?.classList.add('active');
+    
+    // Update page title
+    const pageTitle = document.getElementById('pageTitle');
+    if (pageTitle) {
+      const titles = {
+        'dashboard': 'Dashboard',
+        'live-orders': 'Orders',
+        'inventory-management': 'Inventory Management',
+        'inventory': 'Inventory',
+        'meal-prep': 'Meal Prep',
+        'reports': 'Reports',
+        'settings': 'Settings',
+        'logs': 'Logs'
+      };
+      pageTitle.textContent = titles[route] || 'Dashboard';
+    }
+    
     // Re-render immediately on route change so route-specific widgets update
     render();
   }
