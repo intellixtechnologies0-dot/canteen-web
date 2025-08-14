@@ -9,7 +9,7 @@
     <meta property="og:title" content="Canteen Kitchen Panel" />
     <meta property="og:description" content="Manage orders efficiently with a clean, responsive kitchen workflow." />
     <meta property="og:type" content="website" />
-    <link rel="stylesheet" href="assets/css/styles.css?v=9" />
+    <link rel="stylesheet" href="assets/css/styles.css?v=10" />
   </head>
   <body>
     <div class="app">
@@ -37,63 +37,115 @@
         </header>
 
         <main class="main">
-          <section id="route-dashboard" class="route active grid-2">
-            <div class="card">
-              <h2>Orders Today</h2>
-              <div class="kpi-row">
-                <div class="kpi"><div id="kpiTotal" class="num">0</div><div class="lbl">Total</div></div>
-                <div class="kpi"><div id="kpiPending" class="num">0</div><div class="lbl">Pending</div></div>
-                <div class="kpi"><div id="kpiCompleted" class="num">0</div><div class="lbl">Completed</div></div>
+          <section id="route-dashboard" class="route active">
+            <div class="dashboard-grid">
+              <div class="card">
+                <h2>Orders Today</h2>
+                <div class="kpi-row">
+                  <div class="kpi"><div id="kpiTotal" class="num">3</div><div class="lbl">Total</div></div>
+                  <div class="kpi"><div id="kpiPending" class="num">3</div><div class="lbl">Pending</div></div>
+                  <div class="kpi"><div id="kpiCompleted" class="num">0</div><div class="lbl">Completed</div></div>
+                </div>
               </div>
-            </div>
-            <div class="card">
-              <h2>Inventory Alerts</h2>
-              <ul class="list" id="invAlerts"></ul>
-              <div class="row gap">
-                <button class="btn btn-secondary">Add Dish</button>
-                <button class="btn btn-secondary">Update Stock</button>
+              
+              <div class="card">
+                <h2>Inventory Alerts</h2>
+                <ul class="list" id="invAlerts">
+                  <li>Tea Powder low (1)</li>
+                </ul>
+                <div class="row gap">
+                  <button class="btn btn-secondary">Add Dish</button>
+                  <button class="btn btn-secondary">Update Stock</button>
+                </div>
               </div>
-            </div>
-          </section>
-
-          <section class="route active grid-2" data-dash-previews>
-            <div class="card">
-              <div class="card-head"><h2>Orders (Preview)</h2></div>
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th></tr>
-                  </thead>
-                  <tbody id="dashOrdersBody"></tbody>
-                </table>
+              
+              <div class="card">
+                <h2>Orders (Preview)</h2>
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead>
+                      <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="dashOrdersBody">
+                      <tr><td>#1001</td><td>Pasta</td><td>1</td><td>Pending</td></tr>
+                      <tr><td>#1002</td><td>Coffee</td><td>1</td><td>Pending</td></tr>
+                      <tr><td>#1003</td><td>Veg Sandwich</td><td>2</td><td>Pending</td></tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-            <div class="card">
-              <h2>Meal Prep Queue (Preview)</h2>
-              <div id="dashMealQueue" class="queue"></div>
-            </div>
-            <div class="card">
-              <h2>Inventory (Preview)</h2>
-              <div class="table-wrap">
-                <table class="table">
-                  <thead><tr><th>Item</th><th>Stock</th></tr></thead>
-                  <tbody id="dashInventoryBody"></tbody>
-                </table>
+              
+              <div class="card">
+                <h2>Meal Prep Queue (Preview)</h2>
+                <div id="dashMealQueue" class="queue">
+                  <div class="queue-item">
+                    <span>Pasta</span>
+                    <span class="status">Pending</span>
+                  </div>
+                  <div class="queue-item">
+                    <span>Coffee</span>
+                    <span class="status">Pending</span>
+                  </div>
+                  <div class="queue-item">
+                    <span>Veg Sandwich</span>
+                    <span class="status">Pending</span>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="card">
-              <h2>Recent Activity</h2>
-              <ul class="list" id="dashLogsList"></ul>
-            </div>
-            <div class="card" style="grid-column: 1 / -1;">
-              <h2>Orders</h2>
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
-                  </thead>
-                  <tbody id="dashOrdersFullBody"></tbody>
-                </table>
+              
+              <div class="card">
+                <h2>Inventory (Preview)</h2>
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead><tr><th>Item</th><th>Stock</th></tr></thead>
+                    <tbody id="dashInventoryBody">
+                      <tr><td>Tomatoes</td><td>12</td></tr>
+                      <tr><td>Cheese</td><td>4</td></tr>
+                      <tr><td>Tea Powder</td><td>1</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+              <div class="card">
+                <h2>Recent Activity</h2>
+                <ul class="list" id="dashLogsList">
+                  <!-- Empty for now -->
+                </ul>
+              </div>
+              
+              <div class="card full-width">
+                <h2>Orders</h2>
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead>
+                      <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody id="dashOrdersFullBody">
+                      <tr>
+                        <td>#1001</td>
+                        <td>Pasta</td>
+                        <td>1</td>
+                        <td>Pending</td>
+                        <td><button class="btn btn-secondary">Start</button></td>
+                      </tr>
+                      <tr>
+                        <td>#1002</td>
+                        <td>Coffee</td>
+                        <td>1</td>
+                        <td>Pending</td>
+                        <td><button class="btn btn-secondary">Start</button></td>
+                      </tr>
+                      <tr>
+                        <td>#1003</td>
+                        <td>Veg Sandwich</td>
+                        <td>2</td>
+                        <td>Pending</td>
+                        <td><button class="btn btn-secondary">Start</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </section>
@@ -177,7 +229,7 @@
       </div>
     </div>
 
-    <script src="assets/js/app.js?v=10"></script>
+    <script src="assets/js/app.js?v=11"></script>
   </body>
 </html>
 

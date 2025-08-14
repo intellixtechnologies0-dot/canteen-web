@@ -41,6 +41,17 @@ a { color: var(--brand); text-decoration: none; }
 .route.active { display: block; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 #route-dashboard.grid-2 { grid-template-columns: 1fr 1fr !important; }
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.dashboard-grid .card.full-width {
+  grid-column: 1 / -1;
+}
 .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 16px; }
 .card h2 { margin: 0 0 12px; }
 .card-head { display: flex; align-items: center; justify-content: space-between; }
