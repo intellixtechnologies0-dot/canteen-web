@@ -26,12 +26,12 @@ a { color: var(--brand); text-decoration: none; }
 
 .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
-.app { display: grid; grid-template-columns: 240px 1fr; height: 100vh; }
+.app { display: block; min-height: 100vh; }
 .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; overflow: auto; background: #f7f7f7; border-right: 1px solid var(--border); padding: 16px 8px; }
 .side-nav { display: grid; gap: 4px; align-content: start; }
 .side-item { padding: 10px 12px; border-radius: 8px; color: var(--text); }
 .side-item.active, .side-item:hover { background: #efefef; }
-.content { display: grid; grid-template-rows: auto 1fr auto; height: 100vh; overflow: hidden auto; margin-left: 240px; }
+.content { display: grid; grid-template-rows: auto 1fr auto; min-height: 100vh; overflow: hidden auto; margin-left: 240px; }
 .topbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--panel); backdrop-filter: blur(6px); }
 .top-actions { display: flex; align-items: center; gap: 10px; }
 .search input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; }
