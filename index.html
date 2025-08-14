@@ -14,15 +14,14 @@
   <body>
     <div class="app">
       <aside class="sidebar">
-                 <nav class="side-nav" id="sideNav">
-           <a class="side-item active" href="#/dashboard" data-route="dashboard">Home</a>
-           <a class="side-item" href="#/ongoing-orders" data-route="ongoing-orders">Ongoing Orders</a>
-           <a class="side-item" href="#/past-orders" data-route="past-orders">Past Orders</a>
-           <a class="side-item" href="#/inventory-management" data-route="inventory-management">Inventory Management</a>
-           <a class="side-item" href="#/reports" data-route="reports">Reports</a>
-           <a class="side-item" href="#/settings" data-route="settings">Settings</a>
-           <a class="side-item" href="#/logs" data-route="logs">Logs</a>
-         </nav>
+                         <nav class="side-nav" id="sideNav">
+          <a class="side-item active" href="#/dashboard" data-route="dashboard">Home</a>
+          <a class="side-item" href="#/orders" data-route="orders">Orders</a>
+          <a class="side-item" href="#/inventory-management" data-route="inventory-management">Inventory Management</a>
+          <a class="side-item" href="#/reports" data-route="reports">Reports</a>
+          <a class="side-item" href="#/settings" data-route="settings">Settings</a>
+          <a class="side-item" href="#/logs" data-route="logs">Logs</a>
+        </nav>
       </aside>
 
       <div class="content">
@@ -69,10 +68,7 @@
                  </div>
                </div>
                
-               <div class="card">
-                 <h2>Meal Prep Queue (Preview)</h2>
-                 <div id="dashMealQueue" class="queue"></div>
-               </div>
+
                
                <div class="card">
                  <h2>Inventory (Preview)</h2>
@@ -103,30 +99,39 @@
             </div>
           </section>
 
-                     <section id="route-ongoing-orders" class="route">
-             <div class="card">
-               <div class="card-head"></div>
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
-                  </thead>
-                  <tbody id="ongoingOrdersBody"></tbody>
-                </table>
+                               <section id="route-orders" class="route">
+            <div class="orders-tabs">
+              <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="ongoing">Ongoing Orders</button>
+                <button class="tab-btn" data-tab="live">Live Orders</button>
               </div>
-            </div>
-          </section>
-
-                     <section id="route-past-orders" class="route">
-             <div class="card">
-               <div class="card-head"></div>
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th>Completed At</th></tr>
-                  </thead>
-                  <tbody id="pastOrdersBody"></tbody>
-                </table>
+              
+              <div class="tab-content">
+                <div id="tab-ongoing" class="tab-pane active">
+                  <div class="card">
+                    <div class="table-wrap">
+                      <table class="table">
+                        <thead>
+                          <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
+                        </thead>
+                        <tbody id="ongoingOrdersBody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                
+                <div id="tab-live" class="tab-pane">
+                  <div class="card">
+                    <div class="table-wrap">
+                      <table class="table">
+                        <thead>
+                          <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th>Completed At</th></tr>
+                        </thead>
+                        <tbody id="liveOrdersBody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

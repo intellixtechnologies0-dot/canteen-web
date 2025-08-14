@@ -11,8 +11,7 @@
   const sideNav = document.getElementById('sideNav');
   const routes = {
     'dashboard': document.getElementById('route-dashboard'),
-    'ongoing-orders': document.getElementById('route-ongoing-orders'),
-    'past-orders': document.getElementById('route-past-orders'),
+    'orders': document.getElementById('route-orders'),
     'inventory-management': document.getElementById('route-inventory-management'),
     'inventory': document.getElementById('route-inventory'),
     'reports': document.getElementById('route-reports'),
@@ -123,10 +122,10 @@
       });
     }
 
-    // Past Orders (READY and DELIVERED)
-    const pastOrdersBody = document.getElementById('pastOrdersBody');
-    if (pastOrdersBody) {
-      pastOrdersBody.innerHTML = '';
+    // Live Orders (READY and DELIVERED)
+    const liveOrdersBody = document.getElementById('liveOrdersBody');
+    if (liveOrdersBody) {
+      liveOrdersBody.innerHTML = '';
       completed.forEach((o) => {
         const tr = document.createElement('tr');
         tr.dataset.id = o.id;
@@ -140,7 +139,7 @@
           <td>${statusLabel(o.status)}</td>
           <td>${completedTime}</td>
         `;
-        pastOrdersBody.appendChild(tr);
+        liveOrdersBody.appendChild(tr);
       });
     }
 
@@ -159,16 +158,7 @@
         dashOrdersBody.appendChild(tr);
       });
     }
-    const dashMealQueue = document.getElementById('dashMealQueue');
-    if (dashMealQueue) {
-      dashMealQueue.innerHTML = '';
-      pending.slice(0, 3).forEach((o) => {
-        const div = document.createElement('div');
-        div.className = 'queue-item';
-        div.innerHTML = `<div>${o.items[0]?.name || ''}</div><div class="status">${statusLabel(o.status)}</div>`;
-        dashMealQueue.appendChild(div);
-      });
-    }
+
     const dashInventoryBody = document.getElementById('dashInventoryBody');
     if (dashInventoryBody) {
       dashInventoryBody.innerHTML = '';
@@ -297,6 +287,23 @@
     state.logs.unshift(`Sound ${state.sound ? 'enabled' : 'disabled'}`);
   });
 
+  // Tab functionality for Orders
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('tab-btn')) {
+      const tabName = e.target.dataset.tab;
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+      
+      // Remove active class from all buttons and panes
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabPanes.forEach(pane => pane.classList.remove('active'));
+      
+      // Add active class to clicked button and corresponding pane
+      e.target.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+  });
+
   // Simple hash router
   function setRoute(route) {
     Object.values(routes).forEach((el) => el?.classList.remove('active'));
@@ -309,8 +316,7 @@
     if (pageTitle) {
       const titles = {
         'dashboard': 'Dashboard',
-        'ongoing-orders': 'Ongoing Orders',
-        'past-orders': 'Past Orders',
+        'orders': 'Orders',
         'inventory-management': 'Inventory Management',
         'inventory': 'Inventory',
         'reports': 'Reports',
