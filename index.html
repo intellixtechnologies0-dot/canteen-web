@@ -48,11 +48,20 @@
               </div>
               
                              <div class="card">
-                 <h2>Inventory Alerts</h2>
-                 <ul class="list" id="invAlerts"></ul>
+                 <h2>Order Status</h2>
                  <div class="row gap">
-                   <button class="btn btn-secondary">Add Dish</button>
-                   <button class="btn btn-secondary">Update Stock</button>
+                   <div class="status-item">
+                     <span class="status-badge pending">Pending</span>
+                     <span id="pendingCount">0</span>
+                   </div>
+                   <div class="status-item">
+                     <span class="status-badge preparing">Preparing</span>
+                     <span id="preparingCount">0</span>
+                   </div>
+                   <div class="status-item">
+                     <span class="status-badge ready">Ready</span>
+                     <span id="readyCount">0</span>
+                   </div>
                  </div>
                </div>
                
@@ -61,7 +70,7 @@
                  <div class="table-wrap">
                    <table class="table">
                      <thead>
-                       <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th></tr>
+                       <tr><th>Order ID</th><th>Items</th><th>Total</th><th>Status</th></tr>
                      </thead>
                      <tbody id="dashOrdersBody"></tbody>
                    </table>
@@ -71,18 +80,21 @@
 
                
                <div class="card">
-                 <h2>Inventory (Preview)</h2>
+                 <h2>Recent Orders</h2>
                  <div class="table-wrap">
                    <table class="table">
-                     <thead><tr><th>Item</th><th>Stock</th></tr></thead>
-                     <tbody id="dashInventoryBody"></tbody>
+                     <thead><tr><th>Order ID</th><th>Customer</th><th>Status</th><th>Time</th></tr></thead>
+                     <tbody id="dashRecentOrders"></tbody>
                    </table>
                  </div>
                </div>
                
                <div class="card">
-                 <h2>Recent Activity</h2>
-                 <ul class="list" id="dashLogsList"></ul>
+                 <h2>Quick Actions</h2>
+                 <div class="row gap">
+                   <button class="btn btn-secondary" id="refreshOrders">Refresh Orders</button>
+                   <button class="btn btn-secondary" id="viewAllOrders">View All Orders</button>
+                 </div>
                </div>
                
                <div class="card full-width">
@@ -90,7 +102,7 @@
                  <div class="table-wrap">
                    <table class="table">
                      <thead>
-                       <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
+                       <tr><th>Order ID</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr>
                      </thead>
                      <tbody id="dashOrdersFullBody"></tbody>
                    </table>
@@ -110,12 +122,12 @@
                 <div id="tab-ongoing" class="tab-pane active">
                   <div class="card">
                     <div class="table-wrap">
-                      <table class="table">
-                        <thead>
-                          <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th></th></tr>
-                        </thead>
-                        <tbody id="ongoingOrdersBody"></tbody>
-                      </table>
+                                             <table class="table">
+                         <thead>
+                           <tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+                         </thead>
+                         <tbody id="ongoingOrdersBody"></tbody>
+                       </table>
                     </div>
                   </div>
                 </div>
@@ -123,12 +135,12 @@
                 <div id="tab-live" class="tab-pane">
                   <div class="card">
                     <div class="table-wrap">
-                      <table class="table">
-                        <thead>
-                          <tr><th>Order</th><th>Dish</th><th>Qty</th><th>Status</th><th>Completed At</th></tr>
-                        </thead>
-                        <tbody id="liveOrdersBody"></tbody>
-                      </table>
+                                             <table class="table">
+                         <thead>
+                           <tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Completed At</th></tr>
+                         </thead>
+                         <tbody id="liveOrdersBody"></tbody>
+                       </table>
                     </div>
                   </div>
                 </div>
@@ -191,6 +203,9 @@
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-config.js"></script>
+    <script src="assets/js/supabase-service.js"></script>
     <script src="assets/js/app.js?v=15"></script>
   </body>
 </html>

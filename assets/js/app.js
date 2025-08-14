@@ -29,15 +29,10 @@
 
   const state = {
     orders: [],
-    nextToken: 1000,
+    foodItems: [],
+    categories: [],
     simulate: false,
     sound: false,
-    inventory: [
-      { id: 'i1', name: 'Tomatoes', stock: 12 },
-      { id: 'i2', name: 'Cheese', stock: 4 },
-      { id: 'i3', name: 'Tea Powder', stock: 1 },
-    ],
-    logs: [],
   };
 
   // Theme
@@ -94,190 +89,194 @@
   }
 
   // Render
-  function render() {
-    state.orders = state.orders.map((o) => ({ ...o, status: computeDerivedStatus(o) }));
+  async function render() {
+    try {
+      // Load orders from Supabase
+      const orders = await window.supabaseService.getOrders();
+      state.orders = orders;
 
-    const pending = state.orders.filter((o) => o.status === STATUS.NEW || o.status === STATUS.IN_PROGRESS);
-    const completed = state.orders.filter((o) => o.status === STATUS.READY || o.status === 'DELIVERED');
+      const pending = state.orders.filter((o) => o.status === 'pending' || o.status === 'preparing');
+      const completed = state.orders.filter((o) => o.status === 'ready' || o.status === 'delivered' || o.status === 'completed');
 
-    if (kpiTotal) kpiTotal.textContent = String(state.orders.length);
-    if (kpiPending) kpiPending.textContent = String(pending.length);
-    if (kpiCompleted) kpiCompleted.textContent = String(completed.length);
+      if (kpiTotal) kpiTotal.textContent = String(state.orders.length);
+      if (kpiPending) kpiPending.textContent = String(pending.length);
+      if (kpiCompleted) kpiCompleted.textContent = String(completed.length);
 
-    // Ongoing Orders (NEW and IN_PROGRESS)
-    const ongoingOrdersBody = document.getElementById('ongoingOrdersBody');
-    if (ongoingOrdersBody) {
-      ongoingOrdersBody.innerHTML = '';
-      pending.forEach((o) => {
-        const tr = document.createElement('tr');
-        tr.dataset.id = o.id;
-        tr.innerHTML = `
-          <td>#${o.token}</td>
-          <td>${o.items[0]?.name || ''}</td>
-          <td>${o.items[0]?.qty || 1}</td>
-          <td>${statusLabel(o.status)}</td>
-          <td>${renderRowAction(o.status)}</td>
-        `;
-        ongoingOrdersBody.appendChild(tr);
-      });
+      // Ongoing Orders (pending and preparing)
+      const ongoingOrdersBody = document.getElementById('ongoingOrdersBody');
+      if (ongoingOrdersBody) {
+        ongoingOrdersBody.innerHTML = '';
+        pending.forEach((order) => {
+          const tr = document.createElement('tr');
+          tr.dataset.id = order.id;
+          
+          // Get order items summary
+          const itemsSummary = order.order_items?.map(item => 
+            `${item.quantity}x ${item.food_items?.name || 'Unknown Item'}`
+          ).join(', ') || 'No items';
+          
+          // Get customer info
+          const customerName = order.profiles ? 
+            `${order.profiles.first_name || ''} ${order.profiles.last_name || ''}`.trim() || 
+            `Student ID: ${order.profiles.student_id || 'N/A'}` : 'Unknown Customer';
+          
+          tr.innerHTML = `
+            <td>#${order.id.slice(-8)}</td>
+            <td>${customerName}</td>
+            <td>${itemsSummary}</td>
+            <td>$${order.total_amount}</td>
+            <td>${statusLabel(order.status)}</td>
+            <td>${renderRowAction(order.status, order.id)}</td>
+          `;
+          ongoingOrdersBody.appendChild(tr);
+        });
+      }
+
+      // Past Orders (ready, delivered, completed)
+      const liveOrdersBody = document.getElementById('liveOrdersBody');
+      if (liveOrdersBody) {
+        liveOrdersBody.innerHTML = '';
+        completed.forEach((order) => {
+          const tr = document.createElement('tr');
+          tr.dataset.id = order.id;
+          
+          const itemsSummary = order.order_items?.map(item => 
+            `${item.quantity}x ${item.food_items?.name || 'Unknown Item'}`
+          ).join(', ') || 'No items';
+          
+          const customerName = order.profiles ? 
+            `${order.profiles.first_name || ''} ${order.profiles.last_name || ''}`.trim() || 
+            `Student ID: ${order.profiles.student_id || 'N/A'}` : 'Unknown Customer';
+          
+          const completedTime = new Date(order.updated_at || order.created_at).toLocaleTimeString();
+          
+          tr.innerHTML = `
+            <td>#${order.id.slice(-8)}</td>
+            <td>${customerName}</td>
+            <td>${itemsSummary}</td>
+            <td>$${order.total_amount}</td>
+            <td>${statusLabel(order.status)}</td>
+            <td>${completedTime}</td>
+          `;
+          liveOrdersBody.appendChild(tr);
+        });
+      }
+
+          // Dashboard previews
+      const dashOrdersBody = document.getElementById('dashOrdersBody');
+      if (dashOrdersBody) {
+        dashOrdersBody.innerHTML = '';
+        state.orders.slice(0, 3).forEach((order) => {
+          const tr = document.createElement('tr');
+          const itemsSummary = order.order_items?.map(item => 
+            `${item.quantity}x ${item.food_items?.name || 'Unknown Item'}`
+          ).join(', ') || 'No items';
+          tr.innerHTML = `
+            <td>#${order.id.slice(-8)}</td>
+            <td>${itemsSummary}</td>
+            <td>$${order.total_amount}</td>
+            <td>${statusLabel(order.status)}</td>
+          `;
+          dashOrdersBody.appendChild(tr);
+        });
+      }
+
+      // Full orders table inside dashboard card
+      const dashOrdersFullBody = document.getElementById('dashOrdersFullBody');
+      if (dashOrdersFullBody) {
+        dashOrdersFullBody.innerHTML = '';
+        state.orders.slice(0, 10).forEach((order) => {
+          const tr = document.createElement('tr');
+          tr.dataset.id = order.id;
+          const itemsSummary = order.order_items?.map(item => 
+            `${item.quantity}x ${item.food_items?.name || 'Unknown Item'}`
+          ).join(', ') || 'No items';
+          tr.innerHTML = `
+            <td>#${order.id.slice(-8)}</td>
+            <td>${itemsSummary}</td>
+            <td>$${order.total_amount}</td>
+            <td>${statusLabel(order.status)}</td>
+            <td>${renderRowAction(order.status, order.id)}</td>
+          `;
+          dashOrdersFullBody.appendChild(tr);
+        });
+      }
+
+      // Reports KPIs
+      const repTotal = document.getElementById('repTotal');
+      const repPrep = document.getElementById('repPrep');
+      const repDone = document.getElementById('repDone');
+      if (repTotal) repTotal.textContent = String(state.orders.length);
+      if (repPrep) repPrep.textContent = String(pending.length);
+      if (repDone) repDone.textContent = String(completed.length);
+
+    } catch (error) {
+      console.error('Error rendering orders:', error);
     }
-
-    // Live Orders (READY and DELIVERED)
-    const liveOrdersBody = document.getElementById('liveOrdersBody');
-    if (liveOrdersBody) {
-      liveOrdersBody.innerHTML = '';
-      completed.forEach((o) => {
-        const tr = document.createElement('tr');
-        tr.dataset.id = o.id;
-        const completedTime = o.status === 'DELIVERED' ? 
-          new Date(o.deliveredAt || o.placedAt).toLocaleTimeString() : 
-          new Date(o.placedAt).toLocaleTimeString();
-        tr.innerHTML = `
-          <td>#${o.token}</td>
-          <td>${o.items[0]?.name || ''}</td>
-          <td>${o.items[0]?.qty || 1}</td>
-          <td>${statusLabel(o.status)}</td>
-          <td>${completedTime}</td>
-        `;
-        liveOrdersBody.appendChild(tr);
-      });
-    }
-
-    // Dashboard previews
-    const dashOrdersBody = document.getElementById('dashOrdersBody');
-    if (dashOrdersBody) {
-      dashOrdersBody.innerHTML = '';
-      state.orders.slice(0, 3).forEach((o) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>#${o.token}</td>
-          <td>${o.items[0]?.name || ''}</td>
-          <td>${o.items[0]?.qty || 1}</td>
-          <td>${statusLabel(o.status)}</td>
-        `;
-        dashOrdersBody.appendChild(tr);
-      });
-    }
-
-    const dashInventoryBody = document.getElementById('dashInventoryBody');
-    if (dashInventoryBody) {
-      dashInventoryBody.innerHTML = '';
-      state.inventory.slice(0, 5).forEach((it) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${it.name}</td><td>${it.stock}</td>`;
-        dashInventoryBody.appendChild(tr);
-      });
-    }
-    const dashLogsList = document.getElementById('dashLogsList');
-    if (dashLogsList) {
-      dashLogsList.innerHTML = state.logs.slice(0, 6).map((l) => `<li>${l}</li>`).join('');
-    }
-
-    // Full orders table inside dashboard card
-    const dashOrdersFullBody = document.getElementById('dashOrdersFullBody');
-    if (dashOrdersFullBody) {
-      dashOrdersFullBody.innerHTML = '';
-      state.orders.slice(0, 10).forEach((o) => {
-        const tr = document.createElement('tr');
-        tr.dataset.id = o.id;
-        tr.innerHTML = `
-          <td>#${o.token}</td>
-          <td>${o.items[0]?.name || ''}</td>
-          <td>${o.items[0]?.qty || 1}</td>
-          <td>${statusLabel(o.status)}</td>
-          <td>${renderRowAction(o.status)}</td>
-        `;
-        dashOrdersFullBody.appendChild(tr);
-      });
-    }
-
-    // Inventory Alerts (dashboard + inventory mgmt)
-    const lowItems = state.inventory.filter((i) => i.stock <= 2);
-    const invAlerts = document.getElementById('invAlerts');
-    if (invAlerts) {
-      invAlerts.innerHTML = lowItems.length ? lowItems.map((i) => `<li>${i.name} low (${i.stock})</li>`).join('') : '<li>All good</li>';
-    }
-    const invMgmtAlerts = document.getElementById('invMgmtAlerts');
-    if (invMgmtAlerts) {
-      invMgmtAlerts.innerHTML = invAlerts?.innerHTML || '';
-    }
-
-    // Inventory table
-    const inventoryBody = document.getElementById('inventoryBody');
-    if (inventoryBody) {
-      inventoryBody.innerHTML = '';
-      state.inventory.forEach((it) => {
-        const tr = document.createElement('tr');
-        tr.dataset.id = it.id;
-        tr.innerHTML = `
-          <td>${it.name}</td>
-          <td>${it.stock}</td>
-          <td>
-            <button class="btn btn-secondary inv-inc">+1</button>
-            <button class="btn btn-ghost inv-dec">-1</button>
-          </td>
-        `;
-        inventoryBody.appendChild(tr);
-      });
-    }
-
-    // Reports KPIs
-    const repTotal = document.getElementById('repTotal');
-    const repPrep = document.getElementById('repPrep');
-    const repDone = document.getElementById('repDone');
-    if (repTotal) repTotal.textContent = String(state.orders.length);
-    if (repPrep) repPrep.textContent = String(pending.length);
-    if (repDone) repDone.textContent = String(completed.length);
-
-    // Logs
-    const logsList = document.getElementById('logsList');
-    if (logsList) logsList.innerHTML = state.logs.map((l) => `<li>${l}</li>`).join('');
+  }
   }
 
   function statusLabel(status) {
-    if (status === STATUS.NEW) return 'Pending';
-    if (status === STATUS.IN_PROGRESS) return 'In Progress';
-    if (status === STATUS.READY) return 'Ready';
-    if (status === 'DELIVERED') return 'Delivered';
-    return '';
+    switch (status) {
+      case 'pending': return 'Pending';
+      case 'preparing': return 'Preparing';
+      case 'ready': return 'Ready';
+      case 'delivered': return 'Delivered';
+      case 'completed': return 'Completed';
+      case 'cancelled': return 'Cancelled';
+      default: return status || 'Unknown';
+    }
   }
 
-  function renderRowAction(status) {
-    const start = '<button class="btn btn-secondary act-start">Start</button>';
-    const ready = '<button class="btn btn-primary act-ready">Mark Ready</button>';
-    const deliver = '<button class="btn btn-secondary act-deliver">Delivered</button>';
-    if (status === STATUS.NEW) return `${start}`;
-    if (status === STATUS.IN_PROGRESS) return `${ready}`;
-    if (status === STATUS.READY) return `${deliver}`;
-    return '';
+  function renderRowAction(status, orderId) {
+    const start = `<button class="btn btn-secondary act-start" data-order-id="${orderId}">Start Preparing</button>`;
+    const ready = `<button class="btn btn-primary act-ready" data-order-id="${orderId}">Mark Ready</button>`;
+    const deliver = `<button class="btn btn-secondary act-deliver" data-order-id="${orderId}">Mark Delivered</button>`;
+    
+    switch (status) {
+      case 'pending': return start;
+      case 'preparing': return ready;
+      case 'ready': return deliver;
+      default: return '';
+    }
   }
 
   // Actions
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
     const target = e.target;
     if (!(target instanceof HTMLElement)) return;
-    const row = target.closest('[data-id]');
-    const id = row?.dataset.id;
-
-    if (id) {
-      const order = state.orders.find((o) => o.id === id);
-      if (order) {
-        if (target.classList.contains('act-start')) { order.status = STATUS.IN_PROGRESS; order.startedAt = Date.now(); state.logs.unshift(`#${order.token} started`); }
-        if (target.classList.contains('act-ready')) { order.status = STATUS.READY; state.logs.unshift(`#${order.token} marked ready`); }
-        if (target.classList.contains('act-deliver')) { order.status = 'DELIVERED'; order.deliveredAt = Date.now(); state.logs.unshift(`#${order.token} delivered`); }
+    
+    const orderId = target.dataset.orderId;
+    
+    if (orderId && target.classList.contains('act-start')) {
+      try {
+        await window.supabaseService.updateOrderStatus(orderId, 'preparing');
+        console.log(`Order ${orderId} started preparing`);
+        render();
+      } catch (error) {
+        console.error('Error updating order status:', error);
       }
     }
-
-    // Inventory adjust
-    if (target.classList.contains('inv-inc') || target.classList.contains('inv-dec')) {
-      const it = state.inventory.find((i) => i.id === id);
-      if (it) {
-        it.stock += target.classList.contains('inv-inc') ? 1 : -1;
-        if (it.stock < 0) it.stock = 0;
-        state.logs.unshift(`${it.name} stock ${target.classList.contains('inv-inc') ? '+1' : '-1'}`);
+    
+    if (orderId && target.classList.contains('act-ready')) {
+      try {
+        await window.supabaseService.updateOrderStatus(orderId, 'ready');
+        console.log(`Order ${orderId} marked ready`);
+        render();
+      } catch (error) {
+        console.error('Error updating order status:', error);
       }
     }
-    render();
+    
+    if (orderId && target.classList.contains('act-deliver')) {
+      try {
+        await window.supabaseService.updateOrderStatus(orderId, 'delivered');
+        console.log(`Order ${orderId} marked delivered`);
+        render();
+      } catch (error) {
+        console.error('Error updating order status:', error);
+      }
+    }
   });
 
   // Settings

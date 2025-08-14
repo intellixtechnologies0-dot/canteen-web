@@ -122,6 +122,47 @@ a { color: var(--brand); text-decoration: none; }
 .tab-content { flex: 1; }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
+
+/* Status badges */
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge.preparing {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge.ready {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.delivered {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-badge.completed {
+  background: #f3f4f6;
+  color: #374151;
+}
 .order-head { display: flex; align-items: center; justify-content: space-between; }
 .order-token { font-weight: 700; }
 .order-items { margin: 0; padding-left: 16px; }
