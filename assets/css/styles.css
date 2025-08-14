@@ -28,11 +28,14 @@ a { color: var(--brand); text-decoration: none; }
 
 .app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
 .sidebar { background: #f7f7f7; border-right: 1px solid var(--border); padding: 16px 8px; }
-.side-nav { display: grid; gap: 4px; }
+.side-nav { position: sticky; top: 0; display: grid; gap: 8px; align-content: start; max-height: 100vh; }
+.side-fixed { position: sticky; top: 0; display: grid; gap: 4px; background: #f7f7f7; padding-bottom: 8px; }
+.side-divider { height: 1px; background: var(--border); }
+.side-rest { display: grid; gap: 4px; padding-top: 4px; }
 .side-item { padding: 10px 12px; border-radius: 8px; color: var(--text); }
 .side-item.active, .side-item:hover { background: #efefef; }
 .content { display: grid; grid-template-rows: auto 1fr auto; }
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--panel); }
+.topbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--panel); backdrop-filter: blur(6px); }
 .top-actions { display: flex; align-items: center; gap: 10px; }
 .search input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; }
 .avatar { width: 28px; height: 28px; border-radius: 999px; border: 1px solid var(--border); background: #efefef; }
